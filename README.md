@@ -211,11 +211,12 @@ A new copy of the json file is set for later operation.
 
 See `slacube pedestal help`.
 
+## Bad Channel List
+
 Mask ALL channels of chip 1-3-88
 ```
    slacube bad-channel add 1-3-88
 ```
-Follow the prompt question. Press `y <Enter>` to proceed.
 
 Mask channels 1,3,5 of chip 1-4-102
 ```
@@ -514,7 +515,7 @@ See `slacube power help`
 ## Tasks for the Tutorial
 
 Before doing anything:
-- [READ ME FIRST](read-me-first)
+- [READ ME FIRST](#read-me-first)
 - Notify `#lntf-ops`. Make sure
   - it is ok to power on the LArPix
   - you are the only user running the DAQ
