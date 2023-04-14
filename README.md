@@ -406,6 +406,7 @@ Plot the self-trigger rate using the converted file:
 ```
 
 ![Self-trigger Rate](figures/selftrigger_2023_04_13_19_50_41_PDT__selftrig.png)
+
 Notes:
 - the channel data packet rate is O(1) Hz.
 - it is ok for some empty spots (no trigger on those channel).
