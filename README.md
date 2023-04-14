@@ -14,7 +14,7 @@
   DAQ. Please check if the system is free on `#lntf-ops` channel.
 - **DO NOT** touch the system during the data-taking period (even a few days
   after), unless you are in charge. 
-- You are welcome to try the tutorial as many times as you wish, but not
+- You are welcome to try the tutorial as many times as you wish, given that not
   violating the above rules.
 - Check this page frequently.
 
@@ -51,9 +51,9 @@ The environment becomes active **ONLY** after sourcing the setup script:
 [![asciicast](https://asciinema.org/a/ijHmYXRtfgXRxcEMTkasOkyqx.svg)](https://asciinema.org/a/ijHmYXRtfgXRxcEMTkasOkyqx)
 
 Notes:
-- The same working environment is "reusable", provided that the running
+- The same working environment is "reusable", given that the running
   condition remains unchanged.
-- Remember the name of the directory (make something unique to you).
+- Remember the name of your working directory (make something unique to you).
 - `slacube env curr` shows the setup script for last modified directory, which
   is the most likely environment for the next operation.
 - `slacube env list` shows a list of available environments. Source any of them
@@ -62,6 +62,11 @@ Notes:
 See `slacube env help` for details.
 
 ## Interlude: Help Page
+```
+   slacube COMMAND help
+```
+_Some pages are missing as of 2023-04-15. Working in progress_
+
 [![asciicast](https://asciinema.org/a/II8USTcK29SM3V1P49EEsgWfe.svg)](https://asciinema.org/a/II8USTcK29SM3V1P49EEsgWfe)
 
 ## Controller Configuration
@@ -95,7 +100,7 @@ Set the tile config for later operations:
 ```
    slacube hydra set
 ```
-Choose the desired config file and press "Enter" to confirm.
+Choose a config file and press `<Enter>` to confirm.
 
 [![asciicast](https://asciinema.org/a/ECk2ar9h585Qit2ZbjPNnahPr.svg)](https://asciinema.org/a/ECk2ar9h585Qit2ZbjPNnahPr)
 
@@ -107,6 +112,7 @@ Plot the hydra network
 ![Hydra Network](figures/hydra_6437c4ec.png)
 
 Notes:
+- Output figures are always saved to `$SLACUBE_WORKDIR`.
 - X-forwarding over SSH maybe slow. Try `sshfs` or other `sftp` clients to view
   the image.
 - Only four root chips 11,41,71,101 are connected externally for readout.
@@ -118,7 +124,7 @@ Notes:
   be happened in normal operation.
 - A **chip key** is an unique identifier in form of `{io_group}-{io_channel}-{chip}`.
   - `io_group=1` for the SLACube setup.
-  - `io_channel` is indicated in the figure.
+  - `io_channel={1,2,3,4}`, as indicated in the figure.
   - `chip` ranges from 11 to 110 (a total of 10x10 ASICs per tile)
 - For example, here are valid chip keys: 1-1-13, 1-2-55, 1-3-86, 1-4-101.
 - Chip keys for the same ASIC may vary if a different controller config is used.
@@ -172,18 +178,20 @@ Make pedestal plots:
 ```
    slacube pedestal plot
 ```
-Select pedestal file, and press "Enter".
+Select a pedestal file, and press `<Enter>`.
 
 ![Pedestal](figures/pedestal_2023_04_13_17_23_33_PDT__ped.png)
 
 Notes:
-- For further diagnostic, a csv file is provided from the plot command.
+- For further diagnostic, a csv file is generated from the plot command.
 - Do not pay attention to the empty patterns on the pedestal figures. These are
   known features.
 - The QC test only mask the bad channel with large pedestal > 125 ADC. It is
-  possible to mask channels with high std, `start-qc --apply_noise_cut --noise_cut_value MAX_STD`,
+  possible to mask channels with high std, 
+  `start-qc --apply_noise_cut --noise_cut_value MAX_STD`, 
   which is less often used.
-- You can mask individual channel manually using the chip-key + channel (see later).
+- You can mask individual channel manually using the chip-key + channel (see
+  [Bad Channel List](#bad-channel-list)).
 
 Set the latest bad channel list:
 ```
@@ -251,8 +259,8 @@ To start pedestal monitor runs:
 ```
 Data files are transferred to `$SLACUBE_DROPBOX`.
 
-To stop pedestal monitor runs, execute the following command in a different
-terminal:
+To stop pedestal monitor runs, execute the following command in a _different_
+terminal / shell:
 ```
    slacube ped-mon stop
 ```
@@ -286,7 +294,7 @@ Data files are stored under `/data/slacube/ped-mon-test` on `nu-daq01-ir2`.
 
 Notes:
 - Be caution about using file globing `*.h5` on `$SLACUBE_DROPBOX`. The
-  command **DOES NOT** check for incremental update. In practice, only analyze
+  command **DOES NOT** check for incremental update. In practice only analyze
   the files you need.
 - The outputs are stored in `$SLACUBE_DROPBOX/ped_mon`. The `plot` command will
   use it by default. Alternatively, you may specify a `ped_mon` directory.
@@ -301,7 +309,7 @@ After the preparation of the bad channel list, set a reference pedestal file:
 ```
    slacube pedestal set
 ```
-Pick the latest and greatest pedestal run.
+Pick the latest and greatest pedestal run from the popup window.
 
 Generate threshold config (at room temperate):
 ```
