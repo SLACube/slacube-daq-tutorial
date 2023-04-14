@@ -40,15 +40,15 @@ data files and diagonstic outputs.
 
 To create an working environment:
 ```
-   $ slacube env create some_name
+   slacube env create some_name
 ```
 
 The environment becomes active **ONLY** after sourcing the setup script:
 ```
-   $ source $(slacube env curr)
+   source $(slacube env curr)
 ```
 
-**-- INSERT SCREENCAST HERE --**
+[![asciicast](https://asciinema.org/a/ijHmYXRtfgXRxcEMTkasOkyqx.svg)](https://asciinema.org/a/ijHmYXRtfgXRxcEMTkasOkyqx)
 
 Notes:
 - The same working environment is "reusable", provided that the running
@@ -61,8 +61,8 @@ Notes:
 
 See `slacube env help` for details.
 
-## Interlude: How to Read Help Pages
-**-- INSERT SCREENCAST HERE --**
+## Interlude: Help Page
+[![asciicast](https://asciinema.org/a/II8USTcK29SM3V1P49EEsgWfe.svg)](https://asciinema.org/a/II8USTcK29SM3V1P49EEsgWfe)
 
 ## Controller Configuration
 
@@ -73,11 +73,11 @@ problematic chips.
 
 To create a new hydra network:
 ```
-   $ slacube hydra create
+   slacube hydra create
 ```
 It will generates a json file, somehting like `tile-id_1-autoconfig.json`.
 
-**-- INSERT SCREENCAST HERE --**
+[![asciicast](https://asciinema.org/a/Gbq1YnCVrMevoDbQFFTl7H7RT.svg)](https://asciinema.org/a/Gbq1YnCVrMevoDbQFFTl7H7RT)
 
 Keep an eye on the output. You should see **FOUR** good root chips:
 ```
@@ -93,15 +93,15 @@ issues on the tile.
 
 Set the tile config for later operations:
 ```
-   $ slacube hydra set
+   slacube hydra set
 ```
 Choose the desired config file and press "Enter" to confirm.
-**-- INSERT SCREENCAST HERE --**
+
+[![asciicast](https://asciinema.org/a/ECk2ar9h585Qit2ZbjPNnahPr.svg)](https://asciinema.org/a/ECk2ar9h585Qit2ZbjPNnahPr)
 
 Plot the hydra network
 ```
-   $ slacube hydra plot
-   Save figure to hydra_6437c4ec.png
+   slacube hydra plot
 ```
 
 ![Hydra Network](figures/hydra_6437c4ec.png)
@@ -133,16 +133,16 @@ operations.
 
 To start a trigger rate test:
 ```
-   $ slacube rate-test start
+   slacube rate-test start
 ```
-**-- INSERT SCREENCAST HERE --**
+[![asciicast](https://asciinema.org/a/pHJo4U0ulU3O34miL6paV9ruZ.svg)](https://asciinema.org/a/pHJo4U0ulU3O34miL6paV9ruZ)
 
 A few data files `trigger_rate_*.h5` and a json file started with
 `trigger-rate-DO-NOT-ENABLE-channel-list-...` are produced.
 
 To update the new bad channel list:
 ```
-   $ slacube bad-channel set
+   slacube bad-channel set
 ```
 [![asciicast](https://asciinema.org/a/R6ZVUa9NWcDdhKPdASWlIPhCX.svg)](https://asciinema.org/a/R6ZVUa9NWcDdhKPdASWlIPhCX)
 
@@ -161,6 +161,9 @@ Start a quality control (QC) test:
 ```
    slacube pedestal start-qc
 ```
+
+[![asciicast](https://asciinema.org/a/kebwATHf625sEUNO19j8GHizQ.svg)](https://asciinema.org/a/kebwATHf625sEUNO19j8GHizQ)
+
 A short pedestal run is taken `pedestal_...h5`.
 A new bad channel list is generated `pedestal-bad-channels-...json`.
 Another short pedetal run is taken with the updated bad channe list `recursive_pedestal_...json`.
@@ -171,7 +174,7 @@ Make pedestal plots:
 ```
 Select pedestal file, and press "Enter".
 
-**-- INSERT FIGURES HERE --**
+![Pedestal](figures/pedestal_2023_04_13_17_23_33_PDT__ped.png)
 
 Notes:
 - For further diagonstic, a csv file is provided from the plot command.
