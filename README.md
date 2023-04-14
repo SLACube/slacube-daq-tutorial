@@ -1,4 +1,19 @@
-# Tutorial
+# SALCube DAQ Tutorial
+
+**READ ME FIRST**
+- **DO NOT** power on LArPix during evacuation and HV ramping. Asked when in
+  doubt.
+- **DO NOT** run analysis jobs on DAQ machine. It should be done on dedicated
+  computing clusters (e.g. `s3df`). Running diagonstic analysis is fine.
+- Communicate on Slack
+  - `slaclartpc.slack.com#lntf-ops` for operation related discussions and
+    anouncements.
+  - `slaclartpc.slack.com#slarchetto-log` for logging activities and results
+    (no discussion / replies).
+- There is **NO** locking mechanism to prevent multiple users operating the
+  DAQ. Please check if the system is free on `#lntf-ops` channel.
+- Check this page frequently.
+
 ## Working Enironment
 
 Although **slacube** script works in any folders, a custom working directory
@@ -315,7 +330,7 @@ Answer the prompt questions.
 
 Notes:
 - For diagonstic purpose, you can use `VDDA=1800` (just press "<Enter>"). For
-  more precise voltage readout, see [Power Management](#power).
+  more precise voltage readout, see [Power Management](#power-manager).
 - For cryo (cold) operation, answer `y` in the `is_cryo?` prompt question.
 - The thresholds are ~400+/-50 mV (at room temperature) and ~700+/-50 mV
   (cryo).
@@ -453,3 +468,5 @@ Notes:
 - Temporary and backup copies of bad channel list and threshold are **NOT** archived.
 
 [![asciicast](https://asciinema.org/a/NwzpaPUEKOAtIH48tzhXRh9qw.svg)](https://asciinema.org/a/NwzpaPUEKOAtIH48tzhXRh9qw)
+
+## Power Management
