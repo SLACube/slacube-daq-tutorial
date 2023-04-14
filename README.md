@@ -31,7 +31,7 @@ See `slacube env help` for details.
 ## Interlude: How to Read Help Pages
 **-- INSERT SCREENCAST HERE --**
 
-## Controller Configuration
+## Controller Configuration {#hydra}
 
 A tile controller configuration defines the readout topology (i.e. Hyrda
 network) of the LArPix ASICs. Once the tile config is generated, it can be used
@@ -109,24 +109,24 @@ A few data files `trigger_rate_*.h5` and a json file started with
 
 To update the new bad channel list:
 ```
-   $ slacube blacklist set
+   $ slacube bad-channel set
 ```
-**-- INSERT SCREENCAST HERE --**
+[![asciicast](https://asciinema.org/a/577455.svg)](https://asciinema.org/a/577455)
 
 Note:
 - Use `slacbue cfg` to check the current run configurations, including
   environmental variables and runtime files/directories.
 
-See `slacube rate-test help`, `slacube blacklist help` and `slacube cfg help`.
+See `slacube rate-test help`, `slacube bad-channel help` and `slacube cfg help`.
 
-## Pedestal Test
+## Pedestal Test {#pedestal}
 
-Pedestal test identified channels with large pedestals. A new blacklist is
+Pedestal test identified channels with large pedestals. A new bad-channel is
 generated after the test.
 
 Start a quality control (QC) test:
 ```
-   $ slacube pedestal start-qc
+   slacube pedestal start-qc
 ```
 A short pedestal run is taken `pedestal_...h5`.
 A new bad channel list is generated `pedestal-bad-channels-...json`.
@@ -134,7 +134,7 @@ Another short pedetal run is taken with the updated bad channe list `recursive_p
 
 Make pedestal plots:
 ```
-   $ slacube pedestal plot
+   slacube pedestal plot
 ```
 Select pedestal file, and press "Enter".
 
@@ -151,13 +151,13 @@ Notes:
 
 Set the latest bad channel list:
 ```
-   $ slacube blacklist set
+   slacube bad-channel set
 ```
 Pick the latest `pedestal-bad-channels-...json` and press "Enter".
 
-Do a second check with another pedeatal run (without QC test):
+Double check with a single pedeatal run (without QC test):
 ```
-  $ slacube pedestal start
+   slacube pedestal start
 ```
 It only take a single pedestal run and does not produce a new bad channel list.
 Plot the latest pedestal file and check the figure.
@@ -169,7 +169,7 @@ this stage.
 
 Copy the current bad channel list:
 ```
-   $ slacube blacklist copy
+   slacube bad-channel copy
 ```
 A new copy of the json file is set for later operation.
 
@@ -177,4 +177,126 @@ See `slacube pedestal help`.
 
 ## Interlude: How to Add Bad Channel
 
-![hydra_6437c4ec](https://user-images.githubusercontent.com/55715/231730721-b2c89b6e-bbed-44f5-b91a-7d861f98acad.png)
+Mask ALL channels of chip 1-3-88
+```
+   slacube bad-channel add 1-3-88
+```
+Follow the prompt question. Press `y <Enter>` to proceed.
+
+Mask channels 1,3,5 of chip 1-4-102
+```
+   slacube bad-channel add 1-4-102 1,3,5
+```
+Input the target channels as a comma separated list (no space).
+
+[![asciicast](https://asciinema.org/a/A2azay8kgJ50I1uNkWuzdKBfO.svg)](https://asciinema.org/a/A2azay8kgJ50I1uNkWuzdKBfO)
+
+Notes:
+- The `add` command overwirtes (edit inplace) the current bad channel list. It
+  is recommended to make a copy before editing. See [Pedestal](#pedestal).
+- There is **NO** validity check on the chip-key. See [Controller
+  Configuration](#hydra) .
+- There is **NO** unmask function. Simply revert the changes using `set`
+  commnad to one of the previous versions.
+- It is possible to edit the bad channel list json file manually.
+- It is _unlikely_ to make extensive edit on the bad channel list.
+
+See `slacube bad-channel help`
+
+## Threshold Setting
+
+The `threshold` command determines the self-triggered threshold for each
+channel. The goal is to keep the trigger rate as low as 2 Hz per channels.
+The algorithm is based on a reference pedestal file.
+
+After the preparation of the bad channel list, set a reference pedestal file:
+```
+   slacube pedestal set
+```
+Pick the latest and greatest pedestal run.
+
+Generate threshold config (at room temperatue):
+```
+   slacube threshold start
+```
+
+Generate threshold config (at cryo temperatue):
+```
+   slacube threshold start --cryo
+```
+
+[![asciicast](https://asciinema.org/a/1oiJ1xe2QI66HVKhbb6NRIZuU.svg)](https://asciinema.org/a/1oiJ1xe2QI66HVKhbb6NRIZuU)
+
+Once the threshold setting process is finished, the script will automatically
+set `CFG_DIR` to a newly generated folder. Remember this locatoin as you may
+need to fine-tune the thresholds manually.
+
+If the following error shows up:
+```
+total packets 33475     1-1-19 21031
+offending channel, triggers: [(10, 21031)]
+                high rate channels! raise global threshold 40
+Traceback (most recent call last):
+  File "/home/slacube/app/scripts/larpix_qc/threshold_qc.py", line 715, in <module>
+    c = main(**vars(args))
+  File "/home/slacube/app/scripts/larpix_qc/threshold_qc.py", line 600, in main
+    enable_frontend(c, channels, csa_disable)
+  File "/home/slacube/app/scripts/larpix_qc/threshold_qc.py", line 257, in enable_frontend
+    raise RuntimeError(diff,'\nconfig error on chips',list(diff.keys()))
+RuntimeError: ({Key('1-1-19'): {73: (252, None)}}, '\nconfig error on chips', [Key('1-1-19')])
+```
+Look for the line about _offending channel_ and the line before. In this
+example, chip-key:1-1-19 channel:10 is causing the trouble. Mask out the
+problematic channel.
+```
+   slacube bad-channel add 1-1-19 10
+```
+
+Repeat `slacube threshold start [--cryo]` until no futher error pops out.
+Sometimes it takes a few iterations, however, having a large nubmer of bad
+channels may indicate fundamental problem with the setup.
+
+Plot the thresholds:
+```
+  slacube threshold plot
+```
+Answer the prompt questions.
+
+![Self-trigger Thresholds](figures/cfg_room_6438a01c.png)
+
+Notes:
+- For diagonstic purpose, you can use `VDDA=1800` (just press "<Enter>"). For
+  more precise voltage readout, see [Power Management](#power).
+- For cryo (cold) operation, answer `y` in the `is_cryo?` prompt question.
+- The thresholds are ~400+/-50 mV (at room temperature) and ~700+/-50 mV
+  (cryo).
+
+See `slacube threshold help`
+
+## Threshold Adjustment
+
+There are two type of thresholds:
+1. global threshold (coarser) each chip, ranges 0-255,
+2. trim threshold (finner) for each channel, ranges 0-31.
+
+To increase global threshold of 1-3-86 by 2 DAC,
+```
+   slacube threshold adjust global +2 1-3-86
+```
+
+To decrease global threshold of 1-4-103 by 1 DAC,
+```
+   slacube threshold adjust global -1 1-4-103
+```
+
+To increase trim threshold of 1-1-28 (all channels) by 3 DAC,
+```
+   slacube threshold adjust trim +3 1-1-28
+```
+
+To decrease trim threshold of 1-2-55 (channels 1,5,9) by 2 DAC,
+```
+   slacube threshold adjust trim -2  1-2-55 1,5,9
+```
+
+See `slacube threshold help`
