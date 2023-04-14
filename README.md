@@ -519,7 +519,7 @@ See `slacube power help`
 
 ## Tasks for the Tutorial
 
-Before doing anything:
+### Before doing anything
 - [READ ME FIRST](#read-me-first)
 - Notify `#lntf-ops`. Make sure
   - it is ok to power on the LArPix
@@ -527,7 +527,7 @@ Before doing anything:
 - put an entry "Power on LArPix" on `#slarchetto-log` when you are about to
   execute the first command.
 
-For beginner:
+### Tasks for beginner
 - create a new working environment
 - create a new controller file
   - plot the hydra network
@@ -545,7 +545,7 @@ For beginner:
   - plot the channel rate 
 - archive the current cfg
 
-For intermediate level:
+### Tasks for intermediate level user
 - mask an entire chip 
   - take a single pedestal run
   - confirm the new mask with the mean and std pedestal figure
@@ -560,7 +560,7 @@ For intermediate level:
 - take some long runs, pedestal + self-trigger, for ~1 hr
   - stop data-taking at ~1 hr mark
 
-When you are done:
+### When you are done
 - power down the LArPix
   - check power status
   - put an entry "Power down LArPix" on `#slarchetto-log`.
