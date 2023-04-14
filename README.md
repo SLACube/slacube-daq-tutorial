@@ -209,6 +209,8 @@ Copy the current bad channel list:
 ```
 A new copy of the json file is set for later operation.
 
+[![asciicast](https://asciinema.org/a/BYY96PMBANmSidW25m4skDq4R.svg)](https://asciinema.org/a/BYY96PMBANmSidW25m4skDq4R)
+
 See `slacube pedestal help`.
 
 ## Bad Channel List
@@ -346,14 +348,15 @@ Plot the thresholds:
 ```
   slacube threshold plot
 ```
-Answer the prompt questions.
+
+[![asciicast](https://asciinema.org/a/AWFHtM6E3MgnP6iR5Cn7OBm8r.svg)](https://asciinema.org/a/AWFHtM6E3MgnP6iR5Cn7OBm8r)
 
 ![Self-trigger Thresholds](figures/cfg_room_6438a01c.png)
 
 Notes:
 - For diagonstic purpose, you can use `VDDA=1800` (just press "<Enter>"). For
-  more precise voltage readout, see [Power Management](#power-manager).
-- For cryo (cold) operation, answer `y` in the `is_cryo?` prompt question.
+  more precise voltage readout, see [Power Management](#power-management).
+- For cryo (cold) operation, answer `y` for the `is_cryo?`.
 - The thresholds are ~400+/-50 mV (at room temperature) and ~700+/-50 mV
   (cryo).
 
@@ -370,12 +373,14 @@ Start a short self-trigger test of 2 mins:
    slacube selftrig start --runtime 120
 ```
 
+[![asciicast](https://asciinema.org/a/6m5cbNaC6VlcNEhaXdOKunzyK.svg)](https://asciinema.org/a/6m5cbNaC6VlcNEhaXdOKunzyK)
+
 Note:
 - Keep an eye on the message rate. Ideally it should be arrond 1-10 kHz.
 - If the rate is too high, plot the channel rate. Mask the problemtic channel,
   if there is any.
-- Sometimes it is useful to increase the global threshold by a few (<3) DACs
-  (see [Threshold Adjustment](threshold-adjustment)).
+- Sometimes it is useful to increase the global threshold by a few (<3) DACs.
+  See [Threshold Adjustment](#threshold-adjustment).
 - We did suffer from extremely high trigger rate due to grounding scheme. In
   such case, fine-tuning the thresholds did not help much.
 - You can repeat self-trigger run with longer time. The default is 10 mins with
@@ -405,9 +410,9 @@ There are two type of thresholds:
 1. global threshold (coarser) each chip, ranges 0-255,
 2. trim threshold (finner) for each channel, ranges 0-31.
 
-To increase global threshold of 1-3-86 by 2 DAC,
+To increase global threshold of ALL chips by 1 DAC,
 ```
-   slacube threshold adjust global +2 1-3-86
+   slacube threshold adjust global +1
 ```
 
 To decrease global threshold of 1-4-103 by 1 DAC,
