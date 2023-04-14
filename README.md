@@ -1,13 +1,13 @@
-# SALCube DAQ Tutorial
+# SLACube DAQ Tutorial
 
 ## READ ME FIRST
 - **DO NOT** power on LArPix during evacuation and HV ramping. Asked when in
   doubt.
 - **DO NOT** run analysis jobs on DAQ machine. It should be done on dedicated
-  computing clusters (e.g. `s3df`). Running diagonstic analysis is fine.
+  computing clusters (e.g. `s3df`). Running diagnostic analysis is fine.
 - Communicate on Slack
   - `slaclartpc.slack.com#lntf-ops` for operation related discussions and
-    anouncements.
+    announcements.
   - `slaclartpc.slack.com#slarchetto-log` for logging activities and results
     (no discussion / replies).
 - There is **NO** locking mechanism to prevent multiple users operating the
@@ -23,20 +23,20 @@
 Remember two things:
 1. `ssh slacube@slac.stanford.edu` (and password)
 2. Execute `slacube`
-It contains links and help pages to guide you through the SALCube DAQ system.
+It contains links and help pages to guide you through the SLACube DAQ system.
 
 [![asciicast](https://asciinema.org/a/rQgfTETyK7Qt48at15CxxpXwB.svg)](https://asciinema.org/a/rQgfTETyK7Qt48at15CxxpXwB)
 
 Notes:
-- It is recommanded to use a terminal multiplexer (e.g. `screen` or `tmux`) on
+- It is recommended to use a terminal multiplexer (e.g. `screen` or `tmux`) on
   the remote machine, so that you (and other users) can attach/detach the
-  runing session.
+  ruining session.
 
-## Working Enironment
+## Working Environment
 
 Although **slacube** script works in any folders, a custom working directory
 (set to `$SLACUBE_WORKDIR`) is required to store run configurations, temporary
-data files and diagonstic outputs.
+data files and diagnostic outputs.
 
 To create an working environment:
 ```
@@ -56,7 +56,7 @@ Notes:
 - Remember the name of the directory (make something unique to you).
 - `slacube env curr` shows the setup script for last modified directory, which
   is the most likely environment for the next operation.
-- `slacube env list` shows a list of avaliable environments. Source any of them
+- `slacube env list` shows a list of available environments. Source any of them
   to activate.
 
 See `slacube env help` for details.
@@ -66,7 +66,7 @@ See `slacube env help` for details.
 
 ## Controller Configuration
 
-A tile controller configuration defines the readout topology (i.e. Hyrda
+A tile controller configuration defines the readout topology (i.e. Hydra
 network) of the LArPix ASICs. Once the tile config is generated, it can be used
 for the entire run unless there is a re-routing of the network to avoid
 problematic chips.
@@ -75,7 +75,7 @@ To create a new hydra network:
 ```
    slacube hydra create
 ```
-It will generates a json file, somehting like `tile-id_1-autoconfig.json`.
+It will generates a json file, something like `tile-id_1-autoconfig.json`.
 
 [![asciicast](https://asciinema.org/a/Gbq1YnCVrMevoDbQFFTl7H7RT.svg)](https://asciinema.org/a/Gbq1YnCVrMevoDbQFFTl7H7RT)
 
@@ -86,7 +86,7 @@ good root chips:  [11, 41, 71, 101]
 ... ...
 ```
 
-Sometimes one of the root chip does not work, espeically right after power
+Sometimes one of the root chip does not work, especially right after power
 cycle. In such case, you may abort the job and try it again. The LArPix would
 probably works without all 4 root chips, but missing one could indicates some
 issues on the tile.
@@ -114,7 +114,7 @@ Notes:
   gives the communication path for each chip. 
 - Each chip belongs to one `io_channel` as indicated in different
   colors.
-- If a chip is greyed out, it is not "reachable" from outside. It should not
+- If a chip is grayed out, it is not "reachable" from outside. It should not
   be happened in normal operation.
 - A **chip key** is an unique identifier in form of `{io_group}-{io_channel}-{chip}`.
   - `io_group=1` for the SLACube setup.
@@ -147,8 +147,8 @@ To update the new bad channel list:
 [![asciicast](https://asciinema.org/a/R6ZVUa9NWcDdhKPdASWlIPhCX.svg)](https://asciinema.org/a/R6ZVUa9NWcDdhKPdASWlIPhCX)
 
 Note:
-- Use `slacbue cfg` to check the current run configurations, including
-  environmental variables and runtime files/directories.
+- Use `slacube cfg` to check the current run configurations, including
+  environmental variables and run-time files/directories.
 
 See `slacube rate-test help`, `slacube bad-channel help` and `slacube cfg help`.
 
@@ -166,7 +166,7 @@ Start a quality control (QC) test:
 
 A short pedestal run is taken `pedestal_...h5`.
 A new bad channel list is generated `pedestal-bad-channels-...json`.
-Another short pedetal run is taken with the updated bad channe list `recursive_pedestal_...json`.
+Another short pedestal run is taken with the updated bad channel list `recursive_pedestal_...json`.
 
 Make pedestal plots:
 ```
@@ -177,7 +177,7 @@ Select pedestal file, and press "Enter".
 ![Pedestal](figures/pedestal_2023_04_13_17_23_33_PDT__ped.png)
 
 Notes:
-- For further diagonstic, a csv file is provided from the plot command.
+- For further diagnostic, a csv file is provided from the plot command.
 - Do not pay attention to the empty patterns on the pedestal figures. These are
   known features.
 - The QC test only mask the bad channel with large pedestal > 125 ADC. It is
@@ -191,7 +191,7 @@ Set the latest bad channel list:
 ```
 Pick the latest `pedestal-bad-channels-...json` and press "Enter".
 
-Double check with a single pedeatal run (without QC test):
+Double check with a single pedestal run (without QC test):
 ```
    slacube pedestal start
 ```
@@ -229,12 +229,12 @@ Input the target channels as a comma separated list (no space).
 [![asciicast](https://asciinema.org/a/A2azay8kgJ50I1uNkWuzdKBfO.svg)](https://asciinema.org/a/A2azay8kgJ50I1uNkWuzdKBfO)
 
 Notes:
-- The `add` command overwirtes (edit inplace) the current bad channel list. It
+- The `add` command overwrites (edit in place) the current bad channel list. It
   is recommended to make a copy before editing. See [Pedestal](#pedestal-test).
 - There is **NO** validity check on the chip-key. See [Controller
   Configuration](#controller-configuration) .
 - There is **NO** unmask function. Simply revert the changes using `set`
-  commnad to one of the previous versions.
+  command to one of the previous versions.
 - It is possible to edit the bad channel list json file manually.
 - It is _unlikely_ to make extensive edit on the bad channel list.
 
@@ -242,7 +242,7 @@ See `slacube bad-channel help`
 
 ## Pedestal Monitor
 
-For a long-term pedestal mointoring (e.g. during filling), a series of 10 mins
+For a long-term pedestal monitoring (e.g. during filling), a series of 10 mins
 run are taken with low frequency periodic trigger. 
 
 To start pedestal monitor runs:
@@ -285,7 +285,7 @@ Data files are stored under `/data/slacube/ped-mon-test` on `nu-daq01-ir2`.
 ![Pedestal Monitor](figures/ped_mon_6438d2be.png)
 
 Notes:
-- Be caution about using file globbing `*.h5` on `$SLACUBE_DROPBOX`. The
+- Be caution about using file globing `*.h5` on `$SLACUBE_DROPBOX`. The
   command **DOES NOT** check for incremental update. In practice, only analyze
   the files you need.
 - The outputs are stored in `$SLACUBE_DROPBOX/ped_mon`. The `plot` command will
@@ -303,12 +303,12 @@ After the preparation of the bad channel list, set a reference pedestal file:
 ```
 Pick the latest and greatest pedestal run.
 
-Generate threshold config (at room temperatue):
+Generate threshold config (at room temperate):
 ```
    slacube threshold start
 ```
 
-Generate threshold config (at cryo temperatue):
+Generate threshold config (at cryo temperate):
 ```
    slacube threshold start --cryo
 ```
@@ -316,7 +316,7 @@ Generate threshold config (at cryo temperatue):
 [![asciicast](https://asciinema.org/a/1oiJ1xe2QI66HVKhbb6NRIZuU.svg)](https://asciinema.org/a/1oiJ1xe2QI66HVKhbb6NRIZuU)
 
 Once the threshold setting process is finished, the script will automatically
-set `CFG_DIR` to a newly generated folder. Remember this locatoin as you may
+set `CFG_DIR` to a newly generated folder. Remember this location as you may
 need to fine-tune the thresholds manually.
 
 If the following error shows up:
@@ -340,8 +340,8 @@ problematic channel.
    slacube bad-channel add 1-1-19 10
 ```
 
-Repeat `slacube threshold start [--cryo]` until no futher error pops out.
-Sometimes it takes a few iterations, however, having a large nubmer of bad
+Repeat `slacube threshold start [--cryo]` until no further error pops out.
+Sometimes it takes a few iterations, however, having a large number of bad
 channels may indicate fundamental problem with the setup.
 
 Plot the thresholds:
@@ -354,7 +354,7 @@ Plot the thresholds:
 ![Self-trigger Thresholds](figures/cfg_room_6438a01c.png)
 
 Notes:
-- For diagonstic purpose, you can use `VDDA=1800` (just press "<Enter>"). For
+- For diagnostic purpose, you can use `VDDA=1800` (just press "<Enter>"). For
   more precise voltage readout, see [Power Management](#power-management).
 - For cryo (cold) operation, answer `y` for the `is_cryo?`.
 - The thresholds are ~400+/-50 mV (at room temperature) and ~700+/-50 mV
@@ -365,7 +365,7 @@ See `slacube threshold help`
 ## Self-Trigger Test
 
 Self-trigger test ensures the bad channel list and threshold are set properly,
-such that data rate is manageble when there is no signal (at room temperaute or
+such that data rate is manageable when there is no signal (at room temperature or
 zero E-field in cold). The test is performed after setting the threshold.
 
 Start a short self-trigger test of 2 mins:
@@ -376,8 +376,8 @@ Start a short self-trigger test of 2 mins:
 [![asciicast](https://asciinema.org/a/6m5cbNaC6VlcNEhaXdOKunzyK.svg)](https://asciinema.org/a/6m5cbNaC6VlcNEhaXdOKunzyK)
 
 Note:
-- Keep an eye on the message rate. Ideally it should be arrond 1-10 kHz.
-- If the rate is too high, plot the channel rate. Mask the problemtic channel,
+- Keep an eye on the message rate. Ideally it should be around 1-10 kHz.
+- If the rate is too high, plot the channel rate. Mask the problematic channel,
   if there is any.
 - Sometimes it is useful to increase the global threshold by a few (<3) DACs.
   See [Threshold Adjustment](#threshold-adjustment).
@@ -392,7 +392,7 @@ Convert the raw file
 ```
 Pick a raw file from the list.
 
-Plot the selftrigger rate using the converted file:
+Plot the self-trigger rate using the converted file:
 ```
   slacube selftrig plot
 ```
@@ -408,7 +408,7 @@ See `slacube selftrig help`
 
 There are two type of thresholds:
 1. global threshold (coarser) each chip, ranges 0-255,
-2. trim threshold (finner) for each channel, ranges 0-31.
+2. trim threshold (finer) for each channel, ranges 0-31.
 
 To increase global threshold of ALL chips by 1 DAC,
 ```
@@ -433,11 +433,11 @@ To decrease trim threshold of 1-2-55 (channels 1,5,9) by 2 DAC,
 [![asciicast](https://asciinema.org/a/fNAupQv2LoXp1nEkB4yitZhlH.svg)](https://asciinema.org/a/fNAupQv2LoXp1nEkB4yitZhlH)
 
 Notes:
-- Like editing bad channel list, adjusting thresholds is also taken inplace.
-  Please make a copy of the orignal configuration, `slacube threshold copy`.
+- Like editing bad channel list, adjusting thresholds is also taken in-place.
+  Please make a copy of the original configuration, `slacube threshold copy`.
 - To revert the changes, use `slacube threshold set` to the original copy.
 - Inactive channels are ignored (no adjustment).
-- The new values are alway in ranges. No adjustment beyond upper/lower limit.
+- The new values are always in ranges. No adjustment beyond upper/lower limit.
 - Channel list is comma separated without space.
 - Adjustment of trim threshold is very unlikely.
 
@@ -445,8 +445,8 @@ See `slacube threshold help`
 
 ## Taking Data
 
-Once the thresholds are set to a resonable data rate, you can take data
-continously. The strategy is taking a short pedestal run followed by multiple
+Once the thresholds are set to a reasonable data rate, you can take data
+continuously. The strategy is taking a short pedestal run followed by multiple
 self-trigger runs.
 
 To start data-taking:
@@ -464,7 +464,7 @@ To stop data-taking:
 ```
 
 Same as `ped-mon` command, stop signal take effect only after the end of a run.
-Aborting the jobs `<CTRL>-c` works if needed, but a clean stop is prefered.
+Aborting the jobs `<CTRL>-c` works if needed, but a clean stop is preferred.
 
 There are some cases we want to take some data, even the data rate is huge. As
 such, you may need to decrease the self-trigger runtime. In the worst case, you
@@ -479,7 +479,7 @@ Here is an example of taking a 2-min (120s) pedestal run, followed by five
 
 ## Archive Run Config
 
-For book-keeping, please archive the run config during/after data-taking. Usally the
+For book-keeping, please archive the run config during/after data-taking. Usually the
 same configuration are used for an extended period, e.g. one for the
 entire runs at room temperature and one for cryo, unless there is a change in
 bad channels, thresholds ... etc.
@@ -489,7 +489,7 @@ bad channels, thresholds ... etc.
 ```
 
 Notes:
-- The config is commited (by git) to `${SLACUBE_GIR_DIR}/configs`.
+- The config is committed (by git) to `${SLACUBE_GIR_DIR}/configs`.
 - Only the current controller config, bad channel list and threshold config are
   kept.
 - Temporary and backup copies of bad channel list and threshold are **NOT** archived.
@@ -509,7 +509,7 @@ Power down the LArPix tile:
 ```
    slacube power down
 ```
-Answer the two prompt qeustions to proceed. Check the power status again, `slacube power status`.
+Answer the two prompt questions to proceed. Check the power status again, `slacube power status`.
 
 Notes:
 - After power down the LArPix, the readings are small ~10 mV or mA, but not zeros.
@@ -554,7 +554,7 @@ See `slacube power help`
   - check the message rate 
   - confirm with the rate plot
 - take pedestal monitor runs for ~1 hr
-  - analyze the pedstal file as soon as it arrives to `$SLACUBE_DROPBOX`
+  - analyze the pedestal file as soon as it arrives to `$SLACUBE_DROPBOX`
   - make a "keep-up" plot of the pedestal monitor figure
   - stop ped-mon at ~1 hr  mark
 - take some long runs, pedestal + self-trigger, for ~1 hr
@@ -578,6 +578,6 @@ See `slacube power help`
   - as mentioned earlier, you can reuse your working environment.
   - if so, remember the working directory. You need to source the setup script
     in the next session.
-  - `slaucbe env curr` may not give you the same working directory if somebody
+  - `slacube env curr` may not give you the same working directory if somebody
     use after your session.
   - if you don't intend to reuse the same environment, please delete it.
