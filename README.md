@@ -31,7 +31,7 @@ See `slacube env help` for details.
 ## Interlude: How to Read Help Pages
 **-- INSERT SCREENCAST HERE --**
 
-## Controller Configuration {#hydra}
+## Controller Configuration
 
 A tile controller configuration defines the readout topology (i.e. Hyrda
 network) of the LArPix ASICs. Once the tile config is generated, it can be used
@@ -111,7 +111,7 @@ To update the new bad channel list:
 ```
    $ slacube bad-channel set
 ```
-[![asciicast](https://asciinema.org/a/577455.svg)](https://asciinema.org/a/577455)
+[![asciicast](https://asciinema.org/a/R6ZVUa9NWcDdhKPdASWlIPhCX.svg)](https://asciinema.org/a/R6ZVUa9NWcDdhKPdASWlIPhCX)
 
 Note:
 - Use `slacbue cfg` to check the current run configurations, including
@@ -119,7 +119,7 @@ Note:
 
 See `slacube rate-test help`, `slacube bad-channel help` and `slacube cfg help`.
 
-## Pedestal Test {#pedestal}
+## Pedestal Test
 
 Pedestal test identified channels with large pedestals. A new bad-channel is
 generated after the test.
@@ -175,8 +175,6 @@ A new copy of the json file is set for later operation.
 
 See `slacube pedestal help`.
 
-## Interlude: How to Add Bad Channel
-
 Mask ALL channels of chip 1-3-88
 ```
    slacube bad-channel add 1-3-88
@@ -193,15 +191,66 @@ Input the target channels as a comma separated list (no space).
 
 Notes:
 - The `add` command overwirtes (edit inplace) the current bad channel list. It
-  is recommended to make a copy before editing. See [Pedestal](#pedestal).
+  is recommended to make a copy before editing. See [Pedestal](#pedestal-test).
 - There is **NO** validity check on the chip-key. See [Controller
-  Configuration](#hydra) .
+  Configuration](#controller-configuration) .
 - There is **NO** unmask function. Simply revert the changes using `set`
   commnad to one of the previous versions.
 - It is possible to edit the bad channel list json file manually.
 - It is _unlikely_ to make extensive edit on the bad channel list.
 
 See `slacube bad-channel help`
+
+## Pedestal Monitor
+
+For a long-term pedestal mointoring (e.g. during filling), a series of 10 mins
+run are taken with low frequency periodic trigger. 
+
+To start pedestal monitor runs:
+```
+   slacube ped-mon start
+```
+Data files are transferred to `$SLACUBE_DROPBOX`.
+
+To stop pedestal monitor runs, execute the following command in a different
+terminal:
+```
+   slacube ped-mon stop
+```
+Data-taking will stop after the current run is over. If you are impatient, you
+could abort the commend `<CTRL>-c` (not recommended as it leaves partial data
+file in the working directory). 
+
+You need to analyze each pedestal file one-by-one:
+```
+   slacube ped-mon analyze
+```
+Pick a file from `$SLACUBE_DROPBOX` interactively.
+
+You can provide the file path for running non-interactively,
+```
+   slacube ped-mon analyze path-to-ped-file.h5
+```
+
+For the following example, let's analyze the pedestal during cooling on Jul 29, 2022.
+Data files are stored under `/data/slacube/ped-mon-test` on `nu-daq01-ir2`.
+
+```
+   for f in /data/slacube/ped-mon-test/*.h5
+   do
+     slacube ped-mon analyze $f
+   done
+
+   slacube ped-mon plot
+```
+![Pedestal Monitor](figures/ped_mon_6438d2be.png)
+
+Notes:
+- Be caution about using file globbing `*.h5` on `$SLACUBE_DROPBOX`. The
+  command **DOES NOT** check for incremental update. In practice, only analyze
+  the files you need.
+- The outputs are stored in `$SLACUBE_DROPBOX/ped_mon`. The `plot` command will
+  use it by default. Alternatively, you may specify a `ped_mon` directory.
 
 ## Threshold Setting
 
@@ -273,6 +322,46 @@ Notes:
 
 See `slacube threshold help`
 
+## Self-Trigger Test
+
+Self-trigger test ensures the bad channel list and threshold are set properly,
+such that data rate is manageble when there is no signal (at room temperaute or
+zero E-field in cold). The test is performed after setting the threshold.
+
+Start a short self-trigger test of 2 mins:
+```
+   slacube selftrig start --runtime 120
+```
+
+Note:
+- Keep an eye on the message rate. Ideally it should be arrond 1-10 kHz.
+- If the rate is too high, plot the channel rate. Mask the problemtic channel,
+  if there is any.
+- Sometimes it is useful to increase the global threshold by a few (<3) DACs
+  (see [Threshold Adjustment](threshold-adjustment)).
+- We did suffer from extremely high trigger rate due to grounding scheme. In
+  such case, fine-tuning the thresholds did not help much.
+- You can repeat self-trigger run with longer time. The default is 10 mins with
+  `--runtime` option.
+
+Convert the raw file
+```
+   slacube seftrig convert
+```
+Pick a raw file from the list.
+
+Plot the selftrigger rate using the converted file:
+```
+  slacube selftrig plot
+```
+
+![Self-trigger Rate](figures/selftrigger_2023_04_13_19_50_41_PDT__selftrig.png)
+Notes:
+- the channel data packet rate is O(1) Hz.
+- it is ok for some empty spots (no trigger on those channel).
+
+See `slacube selftrig help`
+
 ## Threshold Adjustment
 
 There are two type of thresholds:
@@ -299,4 +388,68 @@ To decrease trim threshold of 1-2-55 (channels 1,5,9) by 2 DAC,
    slacube threshold adjust trim -2  1-2-55 1,5,9
 ```
 
+[![asciicast](https://asciinema.org/a/fNAupQv2LoXp1nEkB4yitZhlH.svg)](https://asciinema.org/a/fNAupQv2LoXp1nEkB4yitZhlH)
+
+Notes:
+- Like editing bad channel list, adjusting thresholds is also taken inplace.
+  Please make a copy of the orignal configuration, `slacube threshold copy`.
+- To revert the changes, use `slacube threshold set` to the original copy.
+- Inactive channels are ignored (no adjustment).
+- The new values are alway in ranges. No adjustment beyond upper/lower limit.
+- Channel list is comma separated without space.
+- Adjustment of trim threshold is very unlikely.
+
 See `slacube threshold help`
+
+## Taking Data
+
+Once the thresholds are set to a resonable data rate, you can take data
+continously. The strategy is taking a short pedestal run followed by multiple
+self-trigger runs.
+
+To start data-taking:
+```
+   slacube run start
+```
+
+The default settings is a 2-min pedestal run and three 20-min selftrigger runs.
+It loops forever until a stop signal. Raw data files are converted in a queue
+and staged under `$SLACUBE_DROPBOX`.
+
+To stop data-taking:
+```
+   slacube run stop
+```
+
+Same as `ped-mon` command, stop signal take effect only after the end of a run.
+Aborting the jobs `<CTRL>-c` works if needed, but a clean stop is prefered.
+
+There are some cases we want to take some data, even the data rate is huge. As
+such, you may need to decrease the self-trigger runtime. In the worst case, you
+will need to stop data-taking and finish the raw data conversion first. Also
+you may need to free up disk space for new data (to be discussed).
+
+Here is an example of taking a 2-min (120s) pedestal run, followed by five
+5-min (300s) selftriger runs:
+```
+   slacube run 120 300 5
+```
+
+## Archive Run Config
+
+For book-keeping, please archive the run config during/after data-taking. Usally the
+same configuration are used for an extended period, e.g. one for the
+entire runs at room temperature and one for cryo, unless there is a change in
+bad channels, thresholds ... etc.
+
+```
+   slacube cfg archive
+```
+
+Notes:
+- The config is commited (by git) to `${SLACUBE_GIR_DIR}/configs`.
+- Only the current controller config, bad channel list and threshold config are
+  kept.
+- Temporary and backup copies of bad channel list and threshold are **NOT** archived.
+
+[![asciicast](https://asciinema.org/a/NwzpaPUEKOAtIH48tzhXRh9qw.svg)](https://asciinema.org/a/NwzpaPUEKOAtIH48tzhXRh9qw)
