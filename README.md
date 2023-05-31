@@ -17,6 +17,8 @@
 - You are welcome to try the tutorial as many times as you wish, given that not
   violating the above rules.
 - Check this page frequently.
+- [Check this before operation](#before-doing-anything)
+- [Check this after operation](#when-you-are-done)
 
 ## Introduction
 
