@@ -398,7 +398,7 @@ Note:
 
 Convert the raw file
 ```
-   slacube seftrig convert
+   slacube selftrig convert
 ```
 Pick a raw file from the list.
 
