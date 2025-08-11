@@ -488,6 +488,21 @@ Here is an example of taking a 2-min (120s) pedestal run, followed by five
    slacube run 120 300 5
 ```
 
+## External Trigger
+
+Prerequisite:
+- setup an external trigger (consult LArPix specifications)
+- prepare a controller configuration and bad channel list
+
+To take data with external trigger (`--runtime` is in units of seconds):
+```
+   slacube exttrig start --runtime 30
+```
+
+Data are stored in the current working directory. Consider copying/moving them
+to `$SLACUBE_DROPBOX` for data preservation.
+
+
 ## Archive Run Config
 
 For book-keeping, please archive the run config during/after data-taking. Usually the
